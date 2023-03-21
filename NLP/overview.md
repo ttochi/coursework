@@ -1,3 +1,5 @@
+# NLP study 개요
+
 아래 내용에 대하여 입력, 출력, 기능, 입력이 흘러서 출력에 도달하는 과정을 자세히 그림 그리고 설명할 것
 
 - L1 regularization
@@ -52,6 +54,10 @@ https://wikidocs.net/book/2155
   - ELMo
 
 8. CNN in NLP
+
+> feed foward neural net
+fully-connected layer
+loss function에 대해서도 좀 더 알아봐야할 듯... 이게 어떻게 나오는 식이고 어떻게 계산되는가
 
 [심화과정]
 
