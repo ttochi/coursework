@@ -171,7 +171,7 @@ batch는 parameter 값을 조정하기 위해 사용되는 데이터의 양을 �
   - 메모리를 크게 사용해야 하는 단점
 
 - Stochastic Gradient Descent (SGD)
-  - bazie size가 1
+  - batch size가 1
   - 즉, parameter 조정 시 랜덤으로 선택한 하나에 데이터에 대해서만 계산함
   - 그래서 "stocastic" "확률적" Gradient Descent
   - 빠른 계산이 가능하나 정확도가 낮을 수 있음
@@ -204,6 +204,8 @@ Gradient Descent의 한계점을 보완하기 위한 다양한 최적화 기법�
   - RMSprop과 Momentum을 합친 방법
 
 ## 6. Back Propagation
+
+*TODO: 더 자세히 볼 필요가 있다*
 
 Foward propagation 계산이 끝나면 예측값이 나오고 실제값과의 오차가 계산된다.
 
