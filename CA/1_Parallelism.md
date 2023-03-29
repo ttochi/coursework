@@ -220,3 +220,78 @@ Key difference:
 ```
 PPT 74p~96p
 ```
+
+---
+
+<!-- TODO -->
+
+## 3. Explicit Renaming
+
+토마슐로 솔루션에서는 Additional register를 이용해서 Implicit register renaming을 사용
+
+다이나미컬리 physical register를 logical register에 맵핑하겠다
+--> 맵핑 테이블을 관리해서
+
+베이직 프린시플
+: 데이터를 레지스터에 write할 때 새로운 physical register를 allocate 시키고 맵핑테이블을 업데이트한다.
+: 데이터를 읽을 때는 맵핑테이블에서 logical register에 맵핑되는 physical register를 확인한다
+
+#### Explicit Renaming Example
+
+additional physical register를 사용했고
+Rename table을 통해 맵핑했다
+
+## 4. Branch Prediction
+
+## 5. 토마슐로 + Branch Prediction
+
+Reorder Buffer의 사용
+
+<!-- TODO -->
+
+---
+
+# ILP의 한계
+
+There can be much higher natural parallelism in some applications
+
+- Thread Level Parallelism: instruction stream with own PC and data
+같은 코드를 돌리지만 각각이 각자의 data와 PC를 가지고 있다
+
+- Data Level Parallelism: Perform identical operations on data, and lots of data
+Data level parallelism은 결국 SIMD를 얘기하는 것
+
+Thread level 과 data level의 가장 큰 차이점은 Program Counter를 갖느냐 아니냐의 차이가 가장 큽니다
+
+# Data Level Parallelism
+
+Data level parallelism and vector processor
+
+- Vector Supercomputers
+- Vector Processing Overview
+- Vector Memory Operations
+- Vector Programming and Optimization
+
+## Vector Processing Overview
+
+Operation type은 동일하고 input data가 다른 경우를 처리할 수 있는 구조
+
+SIMD (single instruction, multiple data)
+
+Matmul의 dot product과 같이 Same sequence of operation for the multiple data 구조에서 유용함
+
+# Thread Level Parallelism
+
+- 같은 코드를 16개 cpu에서 돌리고 각 cpu는 다른 input data를 받는 상황을 가정해보자
+- 같은 프로그램 코드를 쓰기 때문에 16개의 프로세서가 거의 동일한 일을 수행 --> fetch decode도 거의 동일할 것
+
+그렇다면 many 16개 cpu에 같은 코드를 돌리는 대신, fetch/decode에 드는 로드를 ALU들이 공유하는 구조를 만들자
+
+## GPU 메모리 계층 구조
+
+각 thread에는 reigster와 local memory가 할당
+(하드웨어적으로 local memory는 디바이스 메모리에 위치 --> 접근이 느림)
+
+각 thread 별로 각자의 load/store unit을 가짐
+
+맵핑
