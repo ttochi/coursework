@@ -136,10 +136,8 @@ PPT 15p~41p 예제 반드시 따라가기
 
 #### Out-of-order execute
 
-In-order issue; Out-of-order execute
-
-이슈는 program 순서대로 되었지만 실제 실행은 순서대로 진행되지 않음
-
+In-order issue; Out-of-order execute  
+이슈는 program 순서대로 되었지만 실제 실행은 순서대로 진행되지 않음  
 **By doing out-of-order execute and commit, we can reduce the total cycle of this program**
 
 #### Limitation in Scoreboard
@@ -176,7 +174,7 @@ Reservation station에서 제공하는 additional register를 사용하므로써
 
 #### Common Data Bus
 
-Common Data Bus는 Reservation Station과 연결됨  
+Common Data Bus는 Reservation Station과 연결됨  
 Mem에 있는 데이터를 "directly" adder와 multiplier에 보낸다
 
 즉, CDB `foward` the result of FU directly to waiting FU
@@ -246,52 +244,3 @@ Rename table을 통해 맵핑했다
 ## 5. 토마슐로 + Branch Prediction
 
 Reorder Buffer의 사용
-
-<!-- TODO -->
-
----
-
-# ILP의 한계
-
-There can be much higher natural parallelism in some applications
-
-- Thread Level Parallelism: instruction stream with own PC and data
-같은 코드를 돌리지만 각각이 각자의 data와 PC를 가지고 있다
-
-- Data Level Parallelism: Perform identical operations on data, and lots of data
-Data level parallelism은 결국 SIMD를 얘기하는 것
-
-Thread level 과 data level의 가장 큰 차이점은 Program Counter를 갖느냐 아니냐의 차이가 가장 큽니다
-
-# Data Level Parallelism
-
-Data level parallelism and vector processor
-
-- Vector Supercomputers
-- Vector Processing Overview
-- Vector Memory Operations
-- Vector Programming and Optimization
-
-## Vector Processing Overview
-
-Operation type은 동일하고 input data가 다른 경우를 처리할 수 있는 구조
-
-SIMD (single instruction, multiple data)
-
-Matmul의 dot product과 같이 Same sequence of operation for the multiple data 구조에서 유용함
-
-# Thread Level Parallelism
-
-- 같은 코드를 16개 cpu에서 돌리고 각 cpu는 다른 input data를 받는 상황을 가정해보자
-- 같은 프로그램 코드를 쓰기 때문에 16개의 프로세서가 거의 동일한 일을 수행 --> fetch decode도 거의 동일할 것
-
-그렇다면 many 16개 cpu에 같은 코드를 돌리는 대신, fetch/decode에 드는 로드를 ALU들이 공유하는 구조를 만들자
-
-## GPU 메모리 계층 구조
-
-각 thread에는 reigster와 local memory가 할당
-(하드웨어적으로 local memory는 디바이스 메모리에 위치 --> 접근이 느림)
-
-각 thread 별로 각자의 load/store unit을 가짐
-
-맵핑
