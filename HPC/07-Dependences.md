@@ -87,3 +87,108 @@ Q의 실행은 P의 실행에 대해 컨트롤 디펜던트 하다!
 
 디펜던스가 있으면 실행순서를 못바꾼다 --> 그말인 즉슨 병렬처리를 못한다는 것!!!
 이게 이번 학기 가장 새겨들어야 할 근본적인 원리다
+
+---
+
+## Instruction Pipeline
+
+frequency가 높다 --> 깊은 pipeline을 구현할 수 있다 (pipeline stage를 높인다?)
+
+typical 5-stage pipeline
+
+데이터 헤저드는 데이터 디펜던스랑,
+컨트롤 헤저드는 컨트롤 디펜던스랑 관련이 있는거고
+스트럭쳐 헤저드는 이름 그대로 리소스와 연관된 것
+
+### Data Hazard
+
+1. stall (bubble)
+: 하드웨어적으로도, 소프트웨어적으로도 가능 (`no-ops` 추가)
+
+2. Data Fowarding
+: 데이터를 미리 넘기는거 (WB 전에)
+
+3. Transparent register file
+: 사이클을 반으로 쪼개서
+: WB 단계에서 값을 바로 읽어올 수 있도록
+
+### Structural Hazard
+
+Resource conflict 때문에...
+
+### Control Hazard
+
+PC
+- fetch 다음에 업데이트
+- branch inst에서 값을 수정
+
+컨트롤헤저드는 브랜치 때문에 발생하는데,
+파이프라인이 branch 명령에서 MEM 단계까지 가기 전까지는 다음 inst가 뭔지 몰라
+
+그러면 branch 이후에 수행했던 파이프라인 명령을 다 flush 해야 해
+
+가장 간단한 방법 --> Stall
+
+1. stalling (3 사이클정도 손해)
+: 하드웨어적으로..?
+: branch predictor를 추가 --> 미리 예측 (cpu에서 굉장히 많은 면적을 차지하는 복잡한 트렌지스터임)
+
+> GPU 프로그래밍할 때 가능한 branch를 없애는 게 좋다
+
+2. 컴파일러
+: instruction scheduling
+: no-ops를 추가하거나
+: 앞에 실행할 명령을 뒤로 넣어주거나 (디펜던스가 없어야지 가능)
+
+> loop unrolling (질문 나와서)
+브랜치의 수를 줄이므로서 성능을 높인다는 건데
+근데 하드웨어 브랜치 프레딕터 들어가있으면 큰 효과는 없음
+
+### 결론
+최적화를 위해 파이프라이닝
+--> 하지만 그러다보니 디펜던스에 의해 이런 hazard 문제가 생기더라
+
+
+## In-order Execution
+
+instruction 들어온 순서대로 fetch-decode-execute를 실행하는 것
+
+하드웨어가 명령별로 나뉘어져 있고,
+
+> 그림이 뭔가 병렬적으로 수행할거같지 생겼지만~~ 병렬적으로 수행하고싶게 보이라고 그려진 그림이고 execution 자체는 들어온 순서대로 수행됨 (그래서 OoO로 가자...)
+
+## Out of Order Execution
+
+`reservation station`이라는 queue에 "issue" 한다
+
+> 앞서 FU에 던지는걸 dispatch 한다고 하는데, reservation station에는 issue한다고 함. 그리고 reservation station에서 execute state로 가는 걸 dispatch라고 함.
+
+`reorder buffer` --> 실행은 순서를 바꿔서 했어도 실제 프로그램에 나온 순서대로 state가 바뀔 수 있도록 정리
+
+- Tomasulo Algorithm
+
+- Retirement (graduation)
+: exception이 발생했거나 해서 commit하면 안될 때 --> retire
+: retire? reorder buffer slot is freed
+
+### superscalar
+
+OoO도 많은 종류의 FU를 써서 parallel하게 만든건데...
+
+아까봤던 OoO 파이프라인 그림에서 fetch decode를 동시에 실행하는 수를 늘린다.
+
+동시에 늘리면서 반드시 디펜던스는 지켜야한다!
+
+execution도 동시에 4개? ㄴㄴ...
+
+> 현대의 CPU processor는 전부 파이프라이닝이 되어있고 수퍼스칼라다
+
+슈퍼스칼라는 `다이나믹`하게 `OoO execution` + `동시에 fetch decode` 를 수행한다.
+
+### VLIW Processor
+
+Use a long instruction word
+that contains a fixed number of instructions that are fetched, decoded, issued, and executed synchronously
+
+> 프린터에서 많이 씀
+pdf 점을 어디에 찍어야하는가에 대한 언어라고 봄
