@@ -132,6 +132,8 @@ Training 과정을 통해 예측값과 실제값으로부터 오차를 계산하
 
 ### Batch, Epoch, Iteration
 
+![](https://wikidocs.net/images/page/36033/batchandepochiteration.PNG)
+
 - Epoch
   - 전체 데이터에 대한 한 번의 훈련 횟수
   - 즉, 50 epoch이란 전체 데이터로 총 50번 학습했다는 것
