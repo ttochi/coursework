@@ -50,3 +50,34 @@ Network Interface Card
 
 서버 간 통신을 위한 네트워크 카드 (최소 10Gbps~수백Gbps)
 HPC에서는 멜라녹스 사의 장비를 주로 사용
+
+---
+
+# 메모리
+
+- RAM (Random Access Memory)
+  - 휘발성 메모리 (volatile)
+  - 운영체제와 응용 프로그램이 동작하는데 필요한 데이터를 저장
+
+- ROM (Read Only Memory)
+  - 읽기 전용 메모리
+  - BIOS나 부트로더와 같은 중요한 초기화 및 설정 데이터를 저장
+
+> RAM과 ROM은 컴퓨터에서 메인메모리 외에도 캐시메모리, 디스크에서도 사용할 수 있음!
+
+## RAM
+
+### SRAM
+- Static Random Access Memory
+- Flip-flop으로 작동하는 방식
+  - 전류 신호가 오기 전에는 상태가 변화하지 않음
+- 속도가 빠르고 비싸다
+- 주로 캐시 메모리에서 사용
+
+### DRAM
+- Dynamic Random Access Memory
+- Capacitor로 작동하는 방식
+  - 시간이 지나면 capacitor는 방전됨
+  - 일정 주기로 refresh 신호를 통해 충전시켜줘야 함
+- 메모리 용량이 크고 저렴하다
+- 주로 메인 메모리에서 사용
