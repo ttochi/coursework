@@ -2,15 +2,16 @@
 
 사람들이 루프쪽에 포커스를 하고 있고
 데이터 패러렐리즘을 얘기할 때 loop-level parallelism이라고도 한다
-
 (왜냐면 거기서 병렬성이 가장 많이 나오기 때문)
 
 loop iteration 간의 디펜던스를 따지자!
+
 디펜던스가 없다면 loop 자체를 패러렐하게 수행할 수 있다는 것
 
 > 데이비드 쿡...
 
 anti(WAR), output(WAW) dependence는 false dependence다
+
 즉, 없앨 수 있는 dependence다 --> **Renaming**으로 없앨 수 있다!
 
 ### Loop independent dependence
@@ -33,7 +34,7 @@ sum = sum + A[3];
 
 디펜던스를 지키면서 프로그램을 실행하면 무조건 같은 결과가 나온다!
 
-## Loop transform
+## Loop Transform
 
 루프 트랜스폼의 2가지 방법
 
@@ -43,10 +44,12 @@ sum = sum + A[3];
 ### Loop Fusion
 2개의 루프를 하나로 합친다
 
-위에꺼는 legal
-밑에꺼는 fusion하면 dependence direction이 바뀐다 --> illegal!
+![](./img/042103.png)
 
-fusion하면 뭐가 좋아?
+- 위에꺼는 legal
+- 밑에꺼는 fusion하면 dependence direction이 바뀐다 --> illegal!
+
+Fusion하면 뭐가 좋아?
 - loop overhead 가 줄어들고
 - branching 횟수도 줄어들고
 - `b[i]`가 큰 상황을 가정해보면? cache 효율성이 좋아진다
@@ -60,6 +63,7 @@ fusion하면 뭐가 좋아?
 ## Parallel Algorithm
 
 패러렐 알고리즘은 reduction과 scan만 알고있으면 된다.
+
 나머지는 결국 다 디펜던스 따지는 것
 
 ### Reduction

@@ -16,25 +16,48 @@ N번 블락을 Cache 어디에 놔야하는가?
 2. N-way associative Cache
 3. Fully associative Cache
 
-Set 설정이 없다면, cache miss가 발생할 가능성이 높아진다
+![](./img/042101.png)
+
+| | 각 Set의 way 수 | Set 개수 | Block Placement |
+| --- | --- | --- | --- |
+| **Fully Associative** | 8 (entire cache) | 1 | 어디든 가져다둘 수 있다 |
+| **Directed Mapped** | 1 | 8 | 오직 딱 정해진 곳에만 둘 수 있다 |
+| **2-way Associative** | 2 | 4 | 2개 way 중 선택할 수 있다 |
 
 **Sources of cache misses**
 - Compulsory miss (Cold miss)
 - Capacity miss
 - Conflict miss
-- Coherence
+- Coherence miss
 
 ### 2. Finding Block
 
-프로세스에서 메모리 공간에 접근할 때 virtual memory를 사용
-Pagination에서 virtual --> physical로 변환한 후에 접근함
+- 프로세스에서 메모리 공간에 접근할 때 virtual memory를 사용
+- Pagination에서 virtual --> physical로 변환한 후에 접근함
 
-전체 메모리 address 32bit 중
-1. block offset: cache block size가 32B라면 5bit
-2. set index: 한 way가 1KB라면 1KB/32B --> 5bit
-3. 나머지 22bit를 tag로 사용
+#### 1KB Directed Mapped Cache with 32B Blocks
 
-> 그림 그릴 줄 알아야 함!
+![](./img/042102.png)
+
+- **Block offset**: cache block size가 32B라면 5bit
+- **Set index**: cache 1KB라면 1KB/32B = 32개 set --> 5bit
+- **Tag**: 나머지 22bit를 tag로 사용
+
+#### 2-way Set Associative Cache
+
+![](./img/042103.png)
+
+- **Block offset**: cache block size가 32B라면 5bit
+- **Set index**: cache 1KB라면 (1KB/32B)/2way = 16개 set --> 4bit
+- **Tag**: 나머지 23bit를 tag로 사용
+
+#### Fully Associative Cache
+
+![](./img/042104.png)
+
+- **Block offset**: cache block size가 32B라면 5bit
+- **Set index**: X
+- **Tag**: 나머지 27bit를 tag로 사용
 
 ### 3. Replacement Policy
 - Random: often used for fully associative
@@ -53,7 +76,7 @@ Cache miss?
 - Write allocate
 
 **Write buffer**
-Write-throug에서 문제: write할 때, cache도 업데이트하고 memory도 업데이트 해야해 --> 오래걸린다
+- Write-through에서 문제: write할 때, cache도 업데이트하고 memory도 업데이트 해야해 --> 오래걸린다
 
 write buffer를 사용!
 cache에도 쓰고 memory에도 쓰고가 아니라

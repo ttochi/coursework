@@ -34,9 +34,11 @@ GCC
 이 2가지 하드웨어 테크닉이 엄청 성능을 높였다.
 이걸 설명하려면 dependence에 대한 이해가 필요함
 
-### Dependence
+### Dependence?
 
 두 컴퓨테이션 간의 실행 순서에 대한 관계
+
+### Data Dependence
 
 1. Flow dependence
   - True dependence
@@ -69,7 +71,7 @@ statement들의 집합으로 중간에 빠져나갈 수 없다
 그럼 베이직 블락을 나누는 알고리즘은?
 1. leader를 identify하는 것 (제일 첫 inst)
 2. 어떤 inst가 branch의 타겟이 되면 리더다
-3. if문 다음에 나오는 conditional jump / goto로 나오는 uncoditional jump 도 리더다
+3. conditional jump(if문),uncoditional jump(goto) 바로 다음에 나오는 instruction도 리더다
 4. 리더부터 시작해서 다음 리더 앞까지가 베이직 블락이다!
 
 베이직블락은 컴파일러에서 자동으로 처리
@@ -86,6 +88,7 @@ Q의 실행은 P의 실행에 대해 컨트롤 디펜던트 하다!
 즉, Q의 실행을 P보다 앞에 둘 수 없다!
 
 디펜던스가 있으면 실행순서를 못바꾼다 --> 그말인 즉슨 병렬처리를 못한다는 것!!!
+
 이게 이번 학기 가장 새겨들어야 할 근본적인 원리다
 
 ---
@@ -130,15 +133,15 @@ PC
 가장 간단한 방법 --> Stall
 
 1. stalling (3 사이클정도 손해)
-: 하드웨어적으로..?
-: branch predictor를 추가 --> 미리 예측 (cpu에서 굉장히 많은 면적을 차지하는 복잡한 트렌지스터임)
+  - 하드웨어적으로..?
+  - branch predictor를 추가 --> 미리 예측 (cpu에서 굉장히 많은 면적을 차지하는 복잡한 트렌지스터임)
 
 > GPU 프로그래밍할 때 가능한 branch를 없애는 게 좋다
 
 2. 컴파일러
-: instruction scheduling
-: no-ops를 추가하거나
-: 앞에 실행할 명령을 뒤로 넣어주거나 (디펜던스가 없어야지 가능)
+  - instruction scheduling
+  - no-ops를 추가하거나
+  - 앞에 실행할 명령을 뒤로 넣어주거나 (디펜던스가 없어야지 가능)
 
 > loop unrolling (질문 나와서)
 브랜치의 수를 줄이므로서 성능을 높인다는 건데
@@ -146,8 +149,8 @@ PC
 
 ### 결론
 최적화를 위해 파이프라이닝
---> 하지만 그러다보니 디펜던스에 의해 이런 hazard 문제가 생기더라
 
+하지만 그러다보니 디펜던스에 의해 이런 hazard 문제가 생기더라
 
 ## In-order Execution
 
@@ -171,7 +174,7 @@ instruction 들어온 순서대로 fetch-decode-execute를 실행하는 것
 : exception이 발생했거나 해서 commit하면 안될 때 --> retire
 : retire? reorder buffer slot is freed
 
-### superscalar
+### Superscalar
 
 OoO도 많은 종류의 FU를 써서 parallel하게 만든건데...
 

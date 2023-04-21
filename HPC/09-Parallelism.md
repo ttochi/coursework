@@ -29,7 +29,8 @@ single instruction, multiple data
 - 그리고 저런 inst를 vector instruction이라고 함
 - program counter도 하나다!
 
-9p
+![](./img/042104.png)
+
 - core 안에서 vector inst를 써서 4배로 성능 업
 - core 4개로 나눠서 4배로 성능 업
 
@@ -38,23 +39,28 @@ single program, multiple data
 
 지금은 4개 코어가 같은 코드를 사용하고 threadId로 다르게 동작하도록 설정함
 
+![](./img/042105.png)
+
 #### GPU에서의 SIMT
 single instruction, multiple thread (안좋은 네이밍..)
 > CUDA에서 thread라는 네이밍을 쓰지만 OpenCL의 work-item이 더 적절한 네이밍일수도
 
-SPMD라고 봐야 함
-근데 내부적으로 instruction을 실행할 때는 SIMD
+- SPMD라고 봐야 함
+- 근데 내부적으로 instruction을 실행할 때는 SIMD
+
+---
 
 # Multithreaded Processor
 
-instruction들을
-ILP를 이용하는건데...
+- multiple thread로부터 instruction들을 이슈한다
+- 파이프라이닝된 instruction 간에 디펜던스가 없다는 게 보장되어야 함
+- ILP를 이용하는 것!
 
 4 issue superscalar에서 4개의 instruction들이 다 다른 thread에서 오게 하도록 한 게 multi-threaded processor다
 - 하드웨어를 크게 고칠 필요가 없음
 - 대신 context를 잘 유지해야 함 (register를 사용하는 set이 다 다르게 해줘야 함)
 
-## TLP
+## Thread-level Parallelism
 thread-level parallelism은 data parallism이나 task parallelism을 어떻게 구현했느냐의 문제다
 
 ## Superscalar Processors
@@ -68,6 +74,8 @@ thread-level parallelism은 data parallism이나 task parallelism을 어떻게 �
 - horizontal waste
 - vertical waste
 
+![](./img/042106.png)
+
 ### Vertical Multithreading
 
 - vertical waste를 줄이기 위한 멀티쓰레딩
@@ -80,11 +88,19 @@ thread-level parallelism은 data parallism이나 task parallelism을 어떻게 �
 
 하지만 아직 horizontal waste를 없앨 수 없더라
 
-### Simultaneous Multithreading
+![](./img/042107.png)
 
-horizontal waste도 없애보자
+### Simultaneous Multithreading (SMT)
 
+- horizontal waste도 없애보자
+- Selects instructions for execution from all threads on each cycle
+- 하나의 프로세서 코어에서 여러 개의 thread를 동시에 처리하여 throughput 증가
+
+![](./img/042108.png)
+
+#### SMT의 한계
 근데 이렇게 항상 다른 thread에서 inst를 가져올 수 있을까?
+
 모든 thread가 똑같은 integer addition을 수행한다고 했을 때 각각의 다른 thread에서 inst를 가져와서 스케줄링이 가능한가?
 - issue는 4개를 동시에 할 수 있어도
 - integer add FU는 하나이기 때문에

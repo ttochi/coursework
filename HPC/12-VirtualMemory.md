@@ -165,14 +165,17 @@ cache에 저장되는 주소가 physical 일수도 virtual 일수도
     - cache miss가 나야 address translation
     - TLB access를 cache access와 동시에 할 수 있다.
     - 근데 앞서 얘기했듯이 security issue가 있다
+
 2. Virtually indexed, physically tagged
     - 실제 시스템에서 많이 쓰이는...
     - virtual address로 cache access
     - 그와 동시에 TLB access해서 physical address를 얻고
     - physical address의 tag를 사용해서 비교
+
 3. Physically indexed, virtually tagged
     - 절대 안쓰는...
     - TLB translation이 먼저 일어난 다음에 cache access를 할 수 있음
+
 4. Physically indexed, physically tagged
     - TLB translation이 먼저 일어난 다음에 cache access를 할 수 있음
 

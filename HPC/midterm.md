@@ -20,29 +20,167 @@
 
 > 추가로 core 간 통신 시간이나 cache coherence, memory consistency에 의해 성능향상이 항상 선형적으로 증가하진 않는다
 
-## 2. Number System
+## 2. Floating Point Representation
 
-2. floating point conversion (2회)
-- 127을 8bit 2의 보수표현으로
-- 3.14를 IEEE 754 single precision floating point binary representation으로
-- 2^(-143)을 IEEE 754 single precision floating point binary representation으로
-- 주어진 바이너리 표현을 decimal 로
+Perform the following conversions. Assume the default rounding when you consider IEEE 754 floating-point representations.
 
-## Dependences
+**1. Convert a decimal number −127 to its 8-bit 2’s complement representation.**
 
-4. loop dependence 코드에서 100배가 아닌 10000배 느려진 이유
-- 디펜던스에 대한 설명이 필요
-- 디펜던스가 성능에 어떤 영향을 주는 지 설명이 필요
+```
+127 = 0111 1111
+-127 = 1000 0001 (가장 오른쪽 1 이전까지 뒤집는 것 / 2^8 - 127 = 129)
+```
 
-11. 주어진 코드에서 루프디펜던시에서 어떤 종류의 디펜던시가 있는 지 설명하고 이를 병렬화해바라 (2회)
+**2. Convert a decimal number 3.14 to the IEEE 754 single-precision floating-point binary representation.**
 
-## Parallelism
+```
+3.14
 
-9. SMT 프로세서가 data parallelism에 적절한지?
+(-1)^0 * 1.1001 0001 1110 1011 1000 010 * 2^1
 
-3. simultaneous multi-treading vs superscalar and OoO
+F = 1001 0001 1110 1011 1000 010
+E = 1 + 127 = 128 = 1000 0000
+```
 
-## Cache
+| 0 | 1000 0000 | 1001 0001 1110 1011 1000 010 |
+| --- | --- | --- |
+
+> 처음에 2진수 변환할 때 정확히 계산해야 함ㅠㅠ
+
+**3. Convert a decimal number 2^−143 to the IEEE 754 single-precision floating-point binary representation.**
+
+```
+2^-143
+
+정규값이 표현할 수 있는 e는 -126~127 이므로 서브노멀 값으로 계산해야한다!
+
+E = 000...0
+2^-143 = (-1)^0 * m * 2^-126
+m = 2^-17
+F = 0000 0000 0000 0000 1000 000
+```
+
+| 0 | 0000 0000 | 0000 0000 0000 0000 1000 000 |
+| --- | --- | --- |
+
+**4. Convert the following value in the IEEE 754 single-precision floating-point binary representation.**
+
+| 0 | 0000 1110 | 1101 0000 0000 0000 0000 000 |
+| --- | --- | --- |
+
+```
+e = E - 127 = 14 - 127 = -113
+m = 1 + f = 1.1101 = 1 x 2^0 + 1 x 2^-1 + 1 x 2^-2 + 1 x 2^-4
+
+2^-113 + 2^-114 + 2^-115 + 2^-117
+```
+
+**5. Convert the following value in the IEEE 754 single-precision floating-point binary representation.**
+
+| 0 | 0000 1110 | 1011 0000 0000 0000 0000 000 |
+| --- | --- | --- |
+
+```
+e = E - 127 = 14 - 127 = -113
+m = 1 + f = 1.1011 = 1 x 2^0 + 1 x 2^-1 + 1 x 2^-3 + 1 x 2^-4
+
+2^-113 + 2^-114 + 2^-116 + 2^-117
+```
+
+## 3. Dependences
+
+```c
+for (i = 0; i < N-1; i++) {
+  A[i] = B[D[i]] + 3;       // S1
+  if (i < N/2)              // S2
+    C[i] = A[i+1];          // S3
+  B[D[i]] = A[i] * B[i];    // S4
+  A[i+1] = B[D[i]]+C[i];    // S5
+}
+```
+**(a) Find all potential dependences in the code and specify their types**
+
+- loop independent dependence
+  - flow dependence
+    - S1 --> S4 `A[i]`
+    - S4 --> S5 `B[D[i]]`
+    - S3 --> S5 `C[i]`
+  - anti dependence
+    - S3 --> S5 `A[i+1]`
+    - S1 --> S4 `B[D[i]]`
+  - control dependence
+    - S2 --> S3
+- loop carried dependence
+  - flow dependence
+    - S5 --> S4 `A[i+1]`
+  - anit dependence
+    - S3 --> S1 `A[i+1]`
+  - output dependence
+    - S5 --> S1 `A[i+1]`
+
+**(b) Can you parallelize the code without any code transformation? Explain the reason.**
+
+code transformation 없이 병렬화할 수 없다.
+loop carried dependence가 있어서 loop-level parallelism이 불가능하기 때문
+
+```c
+for (i = 0; i < N-1; i++) {
+  A[D[i]] = B[i] + 3;       // S1
+  if (i < N/2)              // S2
+    C[i] = A[D[i]+1];       // S3
+  B[i] = A[i] * B[i];       // S4
+  A[D[i]+1] = B[i+1]+C[i];  // S5
+}
+```
+**(a) Find all potential dependences in the code and specify their types**
+
+- loop independent dependence
+  - flow dependence
+    - S3 --> S5 `C[i]`
+  - anti dependence
+    - S1 --> S4 `B[i]`
+    - S3 --> S5 `A[D[i]+1]`
+  - control dependence
+    - S2 --> S3
+- loop carried dependence
+  - anit dependence
+    - S5 --> S4 `B[i+1]`
+
+**(b) Can you parallelize the code without any code transformation? Explain the reason.**
+
+code transformation 없이 병렬화할 수 없다.
+loop carried dependence가 있어서 loop-level parallelism이 불가능하기 때문
+
+## 4. Multithreaded Architecture
+
+**1. Is an SMT processor suitable for data parallelism? Explain.**
+
+- SMT는 data parallelism에 적절하지 않다
+- SMT는 하나의 프로세서에서 여러 개의 스레드를 병렬적으로 처리하여 throughput을 늘릴 수 있다.
+- 하지만 동일한 FU를 사용하는 instruction이 동시에 issue 되더라도, FU가 한정적이므로 dispatch를 동시에 할 수 없다.
+- 따라서 동일한 instruction을 여러 data에 병렬화 시키는 data parallelism은 SMT 프로세서에서 적절하지 않다
+
+**2. What are the pros and cons of the simultaneous multithreading architectures compared to the superscalar and out-of-order processors?**
+
+- 기본적으로 out-of-order가 적용된 superscalar 프로세서에서는 n개의 instruction을 동시에 issue할 수 있다
+- 하지만 single thread의 ILP wall에 의해 n개를 동시에 issue하지 못하면 낭비되는 slot이 생기게 된다.
+- SMT 아키텍처에서는 하나의 프로세서에서 여러 개의 thread를 병렬적으로 처리할 수 있게 하여 단순 superscalar에 비해 throughput이 높일 수 있다.
+- Remove both horizontal and vertical waste, more fully utilize the issue width
+- 하지만, thread 별로 context를 관리하는 register를 가지도록 하드웨어가 구현되어야 함
+- 여러 instruction이 동시에 issue될 수 있어도 FU가 한정적이라면 동시에 dispatch 하기 어렵다
+
+## 5. Cache
+
+![](./img/042109.png)
+
+- Spatial locality를 위해 block 단위로 cache에 데이터를 저장한다.
+- `q[i]`는 반복문에서 array의 연속적인 index를 가져오기 때문에 cache hit rate이 높지만
+- `p[q[i]]`는 반복문에서 연속적인 index를 가져오는 것이 아니라서 cache miss가 발생할 확률이 높아진다.
+- 따라서 반복문 수는 100배 많지만, cache miss penalty를 고려하면 실행 속도는 10000배가 될 수 있다.
+
+**2. A direct mapped cache can sometimes have a higher hit rate than a fully
+associative cache with an LRU replacement policy (on the same reference
+pattern). Is this true? If so, give an access pattern that proves it.**
 
 7. directed mapped cache가 fully associatvie cache보다 hit rate가 큰 상황은 언제인가? (2회)
 - 프로그램이 접근하는 spatial data가 cache size보다 클 때?
