@@ -134,6 +134,8 @@ Dynamic scheduling 방식을 사용하면 static 대비 명령어의 수행 순�
 PPT 15p~41p 예제 반드시 따라가기
 ```
 
+![img](./img/042201.png)
+
 #### Out-of-order execute
 
 In-order issue; Out-of-order execute  
@@ -204,6 +206,8 @@ PPT 51p~72p
 
 > Assume: Load 실행에 2 cycle 소요
 
+![img](./img/042202.png)
+
 #### Tomasulo vs. Scoreboard
 
 Key difference:
@@ -230,17 +234,111 @@ PPT 74p~96p
 다이나미컬리 physical register를 logical register에 맵핑하겠다
 --> 맵핑 테이블을 관리해서
 
-베이직 프린시플
-: 데이터를 레지스터에 write할 때 새로운 physical register를 allocate 시키고 맵핑테이블을 업데이트한다.
-: 데이터를 읽을 때는 맵핑테이블에서 logical register에 맵핑되는 physical register를 확인한다
+![img](./img/042203.png)
+
+#### Basic principle
+- 데이터를 레지스터에 write할 때 새로운 physical register를 allocate 시키고 맵핑테이블을 업데이트한다.
+- 데이터를 읽을 때는 맵핑테이블에서 logical register에 맵핑되는 physical register를 확인한다
 
 #### Explicit Renaming Example
 
 additional physical register를 사용했고
 Rename table을 통해 맵핑했다
 
+```
+PPT 104p~122p
+```
+
 ## 4. Branch Prediction
 
 ## 5. 토마슐로 + Branch Prediction
 
-Reorder Buffer의 사용
+이전에 본 dynamic scheduling은 out-of-order completion 임
+- post-interrupt, mis-prediction이 발생하면 write한 걸 다 취소해야 한다.
+- register, memory에 data를 쓰기 전에 branch prediction이 맞는 지 확신을 가져야 한다.
+
+**Key idea**
+- in-order completion while doing out-of-order execution
+- in-order completion을 실현하기 위해서 reorder buffer가 필요함
+
+### Reorder buffer
+
+Reorder buffer를 가진 토마슐로
+- Register file이나 reservation station에 데이터를 적고,
+- Common data bus로부터 데이터를 읽어옴
+
+Register file에 결과를 바로 저장하는게 아니라 temporal한 공간에 먼저 저장해두자!
+
+### 4 Stage Pipeline for Speculative Tomasulo
+
+1. Issue: issue된 instruction에 reorder buffer entry를 할당
+
+2. Execution: operands가 ready가 되면 execute, not ready라면 common data bus를 모니터링
+
+3. Write result: common data bus를 통해 FU와 reorder buffer에 temporal result를 저장
+
+4. Commit: reorder buffer에 저장된 result를 register file에 write
+
+### Speculative Tomasulo Example
+
+```
+160p~
+```
+
+![img](./img/042204.png)
+
+
+#### Reorder buffer that store information
+- currently running instructions
+- destination register
+- temporal value of instruction
+  - branch prediction 때문에 우리는 몇몇 Speculative한 instruction을 실행하고 있을 거다.
+  - 그래서 temporal result가 reorder buffer에 적히게 됨
+
+#### Reorder number
+- index of instruction in reorder buffer
+- 이 값이 있으면 아직 이 instruction의 execution이 끝나지 않았다는 것
+
+그래서 160p의 reorder number의 의미는
+- current result of F6 can be found in 1st entry of reorder buffer
+- temporary result는 reorder buffer에 저장되고, 실제 값이 써질 때 commit할 것
+- F6는 1st entry가 commit될 때 까지 기다린다
+
+#### Head, tail pointer
+
+- 1번 inst가 끝났다
+- #1의 Vaule에 값이 씌여졌다
+- head 포인터를 옮겼다
+- 1번 inst는 cancel할 수 없음!!
+
+그렇기에 head 포인터가 중요하다
+
+중간에 브랜치 명령에서 mis-prediction이 발생했을 때, 모든 execution들을 flush 시키고 correct path에서부터 다시 fetch한다.
+
+### Summary
+
+![img](./img/042205.png)
+
+- Out-of-order execution
+- In-order issue, commit
+
+한계점:
+- Too many data copies
+- Common data bus가 reorder buffer에 붙으면서 복잡해짐
+- reservation station에 data와 tag가 함께 섞이면서 복잡해짐
+
+## 6. Multi Issue
+
+Dynamic scheduling + multiple issue + speculation
+
+### Multi issue without speculation
+![img](./img/042206.png)
+
+- 각 cycle에서 2개의 instruction을 issue할 수 있다 (branch는 하나만)
+- 가능한 많은 inst를 issue해야 병렬화의 가능성이 높아짐
+- Speculation이 없다면, 2nd iteration 이후의 명령은 7 cycle이 끝나기 전까지 실행할 수 없다
+
+### Multi issue with speculation
+![img](./img/042207.png)
+
+- Speculative에서는 7 cycle의 branch 명령이 실행되기 전에 2nd iteration도 execution 시켜둘 수 있음

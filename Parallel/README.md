@@ -1,5 +1,16 @@
 # Parallelism Study Overview
 
+1. Tensor parallelism: Megatron paper #1
+2. Sequence parallelism: Megatron paper #3
+3. Activation recomputation(or activation checkpointing) (+ selective version): Megatron paper #3
+4. ZeRO-DP (or fully-sharded DP): ZeRO
+5. Pipeline parallelism + Gradient accumulation (micro-batch concept): Gpipe
+6. Pipeline parallelism - better schedule: PipeDream series
+7. Pipeline parallelism - interleaving stages: Megatron paper #2
+8. Mixture of Experts: Switch transformer
+9. CPU offloading: ZeRO-offload
+10. NVMe offloading: ZeRO-infinity
+
 Day 1
 1. Gpipe (https://arxiv.org/pdf/1811.06965.pdf)
 2. PipeDream (https://arxiv.org/abs/1806.03377)
