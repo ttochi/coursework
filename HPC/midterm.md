@@ -182,8 +182,10 @@ loop carried dependence가 있어서 loop-level parallelism이 불가능하기 �
 associative cache with an LRU replacement policy (on the same reference
 pattern). Is this true? If so, give an access pattern that proves it.**
 
-7. directed mapped cache가 fully associatvie cache보다 hit rate가 큰 상황은 언제인가? (2회)
-- 프로그램이 접근하는 spatial data가 cache size보다 클 때?
+- True
+- cache block entry가 4일 때, 0 -> 1 -> 2 -> 3 -> 6 -> 7 -> 0 -> 1 순으로 cache access가 발생
+- directed mapped의 경우, 마지막 0과 1의 access에 대해 cache hit이 발생하지만
+- fully associative cache with LRU의 경우 0과 1의 access에 대해 cache miss가 발생
 
 ## Virtual Memory
 

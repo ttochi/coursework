@@ -123,19 +123,30 @@ Use the given figure and draw missing parts to explain the cache hit operation.*
 
 ## 8. Cache Coherence
 
-- MESI protocol
+```
+MESI protocol
+MOESI protocol
+```
 
 ## 9. Cache Partitioning
 
+## 10. DRAM Memory Access Scheduling, Address Mapping
 
-## 5. Memory Problem 1
+**1.1 What is the tRC (row cycle time) in DRAM?**
+- It is a minimum period for a bank to be consecutively activated. During tRC, a bank is activated and precharged as the following figure shows.
 
-- 4 bank DRAM
+**5. Assume a four-bank DRAM. The following figure illustrates how the first-come-first-serve (FCFS) policy works in memory access scheduling.**
 
-## 6. Memory Problem 2
+![](./img/042304.png)
 
-- DRAM 칩...
+**Show how to improve memory utilization by applying address remapping (bank-row-column to row-bank-column by the memory controller) and the first-ready (FR) policy. Drawing the schedule result as well.**
 
-## DRAM refresh
+**1.4 How can XOR interleaving reduce bank conflicts in case of cache miss**
 
-## Virtual Memory
+## 11. DRAM Refresh
+
+**The following table illustrates how tRFC increases as DRAM chip capacity increases. Assume the conventional auto- refresh command protocol (8k commands per 64 ms) is adopted.**
+
+**(1) In case of 4Gb DRAM chip, what is the maximum memory utilization (# cycles of data I/O transfer / total # cycles) considering that the DRAM chip cannot perform data I/O transfer (read or write operation) during auto-refresh operation?**
+
+## 12. Address Translation (virtual to physical)
