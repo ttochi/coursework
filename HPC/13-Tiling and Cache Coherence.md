@@ -18,7 +18,7 @@ loop를 더 작은 단위로 나누는 것
 for (i=0; i<N; i++)
   for (j=0; j<N; j++)
     for (k=0; k<N k++)
-      C[i][j] = B[i][k] * A[k][j];
+      C[i][j] = A[i][k] * B[k][j];
 ```
 
 matrix를 메모리에 저장할 때 row-major로 값이 저장된다

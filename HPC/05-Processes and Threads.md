@@ -64,7 +64,7 @@ Parallel program vs. Concurrent program
 ## Threads
 
 Fetch - decode - execute 루프가 계속 도는데
-그런 루프를 돌고있는 인스턴스 하나르 thread라고 보면 돼
+그런 루프를 돌고있는 인스턴스 하나를 thread라고 보면 돼
 
 즉 thread는 스케줄링의 대상이되는 unit이다.
 
@@ -77,7 +77,7 @@ Fetch - decode - execute 루프가 계속 도는데
 
 얘도 프로세스처럼 user-level thread, kernel-level thread로 나뉜다
 
-thread 안에서는 똑같은 code를 share함 (share 하는 data도 있음)
+thread 안에서는 똑같은 code를 share함 (share 하는 data도 있음)  
 private 한거는 call stack, PC & register
 
 
@@ -96,18 +96,24 @@ CFS는 시스템의 모든 프로세스에 대한 CPU 시간을 공평하게 분
   - nice value가 작다 --> process weight가 높다
 
 #### Time Slice
-- 프로세스한테 주는 시간
-- priority가 높은 친구들에게 time slice를 많이 준다
+- 프로세스한테 주는 시간 (모든 프로세스가 동일하게 받음)
+- priority가 높은 친구들에게 time slice 수를 많이 준다
 
 #### Virtual Runtime
-- 각 프로세스가 실제로 CPU를 사용한 시간이 아니라, 사용할 수 있는 CPU 시간의 추정치
-- 즉, 각 프로세스가 사용할 수 있는 CPU 시간의 양
-- Virtual runtime은 프로세스의 우선순위가 클수록 높게 부여된다.
 
-프로세스의 누적 실행시간은 weight에 반비례한다.
+각 프로세스가 실제로 CPU를 사용한 시간이 아니라, 사용한 CPU 시간의 추정치
+- Virtual runtime이 작다는 것은 불공평하게도 지금까지 CPU를 많이 못받았다는 것
+- Virtual runtime이 작은 친구한테 CPU를 더 주도록 스케줄링한다
 
-- virtual runtime이 작을수록 프로세서가 더 시간을 필요로 한다
-priority가 작을수록 virtual runtime을 적게 준다 (여기 다시 들어야해!!!)
+virtual runtime은 physical runtime에 비례하고, weight에 반비례하도록 준다.
+- 실제 사용한 시간만큼 값을 넣어주고, 우선순위 높을수록 작은 값이 되도록 하는 것
+
+> 스케줄링을 위해 정해놓은 임의의 metric으로 보면된다
+
+priority가 높은 놈이 CPU를 더 많이 가져갈 수 있도록!
+- priority가 높으면
+- virtual runtime이 작아짐
+- CPU를 더 많이 주겠다!
 
 #### Red-black Tree
 
@@ -140,10 +146,12 @@ CFS는 싱글 프로세서에서의 스케줄링 방법
 
 ![](./img/042102.png)
 
-하이어라키컬하게 스케줄링 도메인을 정의해놓고
-스케줄링 도메인간의 로드밸런싱을 한다는 것
+하이어라키컬하게 스케줄링 레벨을 정의해놓고
+각각의 스케줄링 레벨 간에 적절한 스케줄링 policy를 적용해서 로드밸런싱을 한다는 것
 
 #### Run-queue Balancing
+
+멀티 프로세싱에서 주된 스케줄링 policy
 
 리밸런싱 틱 (SMP 스케줄링 틱)
 - 리밸런싱 틱이 발생할 때 로드밸런싱을 수행
