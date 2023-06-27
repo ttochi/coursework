@@ -251,6 +251,23 @@ PPT 104p~122p
 
 ## 4. Branch Prediction
 
+1. simple한 방법
+
+- branch 주소에 대한 branch history table을 가지고 이전의 결과값을 그대로 따른다
+- 여기서 1bit만으로 history를 관리하지 않고 2bit를 사용하면 예측 정확도를 높일 수 있다
+
+2. 문제점
+
+- 근데 branch history table이 무작정 클 수 없으므로 여러 branch 주소가 같은 table entry를 바라볼 수 있다
+- 특정 branch A의 결과에 따라 branch B의 결과가 결정되는 경우가 있음
+
+3. two-level branch predictor
+
+- two-level branch predictor를 사용하여 이전 브랜치의 결과와 현재 브랜치 주소를 함께 사용하여 결과를 예측한다
+- 방식이 GAg, GAs, GAp와 같은 스키마가 있음
+- Gselect는 BHR(branch history register)의 LSB와 PC의 LSB를 조합하여 branch history table에 접근
+- Gshare는 BHR과 PC를 XOR 시킨 값으로 branch history에 접근
+
 ## 5. 토마슐로 + Branch Prediction
 
 이전에 본 dynamic scheduling은 out-of-order completion 임
